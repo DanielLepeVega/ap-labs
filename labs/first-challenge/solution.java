@@ -18,6 +18,6 @@ public class solution{
 
 	public static void main(String[] args){
 		solution sol = new solution();
-		sol.solve(args[0]);
+		sol.solve(args[0]);//final
 	}
 }
