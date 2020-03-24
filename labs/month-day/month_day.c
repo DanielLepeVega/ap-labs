@@ -2,7 +2,7 @@
 #include <stdlib.h> 
 #include <stdbool.h>
 
-/* month_day function's prototype */
+/* month_day function's prototype  */
 static char daytab[2][13] = {
     {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
     {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
