@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 void displayString(char str[])
 {
     /*for(int k = 0;k<sizeof(str);k++){
-        printf("%c", str[k]);
+        printf("%c", str[k]); 
     }*/
     printf("Reversed Output: ");
     for(int i=50;i>0;i--){
