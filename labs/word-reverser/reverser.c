@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
             break;
         }
     }             
-    displayString(str);     // Passing string to a function.    
+    displayString(str);     // Passing string to a function.     
     return 0;
 }
 void displayString(char str[])
