@@ -4,7 +4,7 @@ void displayString(char str[]);
 int main(int argc, char *argv[])
 {
     char str[50];
-    printf("Input: ");
+    printf("In: ");
     char c = getchar();
     int i = 0;
     while(c != '\n'){
@@ -22,7 +22,7 @@ void displayString(char str[])
     /*for(int k = 0;k<sizeof(str);k++){
         printf("%c", str[k]);  
     }*/
-    printf("Reversed Output: ");
+    printf("Out: ");
     for(int i=50;i>0;i--){
         printf("%c", str[i]);
     }
