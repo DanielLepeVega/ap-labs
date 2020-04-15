@@ -4,13 +4,24 @@
 #include <time.h>
 #include "logger.h"
 
-int myMethVPrintF(const char *format, va_list arg){
-	fflush(stdin); 
-	actualTime();
-	int r = vprintf(format, arg);
-	printf("\033[0m"); // resetColor
-	va_end(arg);
-	return r;
+int actualTime ()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+
+  time ( &rawtime );
+  timeinfo = localtime ( &rawtime );
+  printf ( "Current local time and date: %s", asctime (timeinfo) );
+
+  return 0;
+}
+int errorf(const char *format, ...){
+	fflush(stdin);
+	actualTime(); 
+	printf("\033[0;31m"); // setColorRed
+	va_list arg;
+	va_start(arg, format);
+	return myMethVPrintF(format, arg);
 }
 
 int infof(const char *format, ...){
@@ -31,14 +42,16 @@ int warnf(const char *format, ...){
 	return myMethVPrintF(format, arg);
 }
 
-int errorf(const char *format, ...){
-	fflush(stdin);
-	actualTime(); 
-	printf("\033[0;31m"); // setColorRed
-	va_list arg;
-	va_start(arg, format);
-	return myMethVPrintF(format, arg);
+int myMethVPrintF(const char *format, va_list arg){
+	fflush(stdin); 
+	actualTime();
+	int r = vprintf(format, arg);
+	printf("\033[0m"); // resetColor
+	va_end(arg);
+	return r;
 }
+
+
 
 int panicf(const char *format, ...){
 	fflush(stdin);
@@ -51,14 +64,3 @@ int panicf(const char *format, ...){
 	return 0;
 }
 
-int actualTime ()
-{
-  time_t rawtime;
-  struct tm * timeinfo;
-
-  time ( &rawtime );
-  timeinfo = localtime ( &rawtime );
-  printf ( "Current local time and date: %s", asctime (timeinfo) );
-
-  return 0;
-}
