@@ -51,8 +51,6 @@ int myMethVPrintF(const char *format, va_list arg){
 	return r;
 }
 
-
-
 int panicf(const char *format, ...){
 	fflush(stdin);
 	actualTime(); 
