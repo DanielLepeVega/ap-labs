@@ -15,8 +15,19 @@ int actualTime ()
 
   return 0;
 }
+
+int myMethVPrintF(const char *format, va_list arg){
+	//fflush(stdin); 
+	
+	int r = vprintf(format, arg);
+	printf("\033[0m"); // resetColor
+	va_end(arg);
+	return r;
+	actualTime();
+}
+
 int errorf(const char *format, ...){
-	fflush(stdin);
+	//fflush(stdin);
 	actualTime(); 
 	printf("\033[0;31m"); // setColorRed
 	va_list arg;
@@ -25,7 +36,7 @@ int errorf(const char *format, ...){
 }
 
 int infof(const char *format, ...){
-	fflush(stdin);
+	//fflush(stdin);
 	actualTime(); 
 	printf("\033[0m"); // resetColor
 	va_list arg;
@@ -34,7 +45,7 @@ int infof(const char *format, ...){
 }
 
 int warnf(const char *format, ...){
-	fflush(stdin);
+	//fflush(stdin);
 	actualTime(); 
 	printf("\033[0;33m"); // setColorToYellow
 	va_list arg;
@@ -42,17 +53,8 @@ int warnf(const char *format, ...){
 	return myMethVPrintF(format, arg);
 }
 
-int myMethVPrintF(const char *format, va_list arg){
-	fflush(stdin); 
-	actualTime();
-	int r = vprintf(format, arg);
-	printf("\033[0m"); // resetColor
-	va_end(arg);
-	return r;
-}
-
 int panicf(const char *format, ...){
-	fflush(stdin);
+	//fflush(stdin);
 	actualTime(); 
 	printf("\033[1;35m"); // setColorToBaldMagenta
 	va_list arg;
