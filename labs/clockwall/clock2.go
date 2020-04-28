@@ -5,13 +5,15 @@ import (
 	"io"
 	"log"
 	"net"
+	"os"
 	"time"
 )
 
-func handleConn(c net.Conn) {
+func handleConnections(c net.Conn, local string) {
 	defer c.Close()
 	for {
-		_, err := io.WriteString(c, time.Now().Format("15:04:05\n"))
+		str := local + ":  " + time.Now().Format("15:04:05\n")
+		_, err := io.WriteString(c, str)
 		if err != nil {
 			return // e.g., client disconnected
 		}
@@ -20,7 +22,14 @@ func handleConn(c net.Conn) {
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "localhost:9090")
+	local, err := time.LoadLocation("Local")
+	if err != nil {
+		log.Fatal("Error getting TZ")
+	}
+	if len(os.Args) < 3 {
+		log.Fatal("Usage: go run clock2.go -port PORT")
+	}
+	listener, err := net.Listen("tcp", "localhost:"+os.Args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,6 +39,7 @@ func main() {
 			log.Print(err) // e.g., connection aborted
 			continue
 		}
-		go handleConn(conn) // handle connections concurrently
+
+		go handleConnections(conn, local.String()) // handle connections concurrently
 	}
 }
