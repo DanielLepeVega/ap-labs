@@ -11,19 +11,26 @@ import (
 	"log"
 	"net"
 	"os"
+	"fmt"
 )
 
 //!+
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8000")
+	if len(os.Args) != 5 {
+		log.Fatal("Error with parameters, usage: go run client.go -user [user] -server [server]")
+	}
+	user := os.Args[2]
+	server := os.Args[4]
+	conn, err := net.Dial("tcp", server)
 	if err != nil {
 		log.Fatal(err)
 	}
-	done := make(chan struct{})
+	fmt.Fprintln(conn, user)
+	done := make(chan bool)
 	go func() {
-		io.Copy(os.Stdout, conn) // NOTE: ignoring errors
-		log.Println("done")
-		done <- struct{}{} // signal the main goroutine
+		io.Copy(os.Stdout, conn) // Ignoring possible errors
+		log.Println("procces is done")
+		done <- true // signal the main goroutine
 	}()
 	mustCopy(conn, os.Stdin)
 	conn.Close()
@@ -33,7 +40,8 @@ func main() {
 //!-
 
 func mustCopy(dst io.Writer, src io.Reader) {
-	if _, err := io.Copy(dst, src); err != nil {
+	_, err := io.Copy(dst, src)
+	if err != nil {
 		log.Fatal(err)
 	}
 }
