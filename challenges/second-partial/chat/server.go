@@ -57,7 +57,7 @@ func broadcaster() {
 	}
 }
 func admin(who string, cli clientChannel) {//turns a user into an admin
-	fmt.Println(serverInformation + "["+ who + "] has been promoted as the master ADMIN")
+	fmt.Println(serverInformation + "["+ who + "] has been promoted as the MASTER-ADMIN")
 	clients[cli].admin = true
 	cli <- serverInformation + "You're the new IRC Server MASTER-ADMIN"
 }
@@ -106,28 +106,6 @@ func handleConn(conn net.Conn) {
 				if msg[0] == '/' { // Command
 					values := strings.Split(msg, " ")
 					switch values[0] {//check all the possible commands
-					case "/users":
-						var user_name string
-						for _,p := range clients{
-							user_name += p.name + ", "
-						}
-						ch <- serverInformation + user_name[:len(user_name)-2]
-					case "/msg":
-						if len(values) < 3 {
-							ch <- serverInformation + "Error parameters not in order, usage: /msg <user> <msg>"
-						} else {
-							var found = false
-							for _,p := range clients {
-								if p.name == values[1] {
-									found = true
-									p.channel <- who + " (direct) > " + msg[6+len(p.name):]
-									break;
-								}
-							}
-							if !found {
-								ch <- serverInformation + "Error, user not found"
-							}
-						}
 					case "/time":
 						// Ingoring potential errors from time.LoadLocation("Local")
 						location,_ := time.LoadLocation("Local")
@@ -138,49 +116,73 @@ func handleConn(conn net.Conn) {
 							loc = curr.String()
 						}
 						ch <- serverInformation + "Local Time: " + loc + " " + time.Now().Format("15:04")
-					case "/user":
+					
+					case "/users"://it prints the users connected to the server
+						var user_name string
+						for _,person := range clients{
+							user_name += person.name + ", "
+						}
+						ch <- serverInformation + user_name[:len(user_name)-2]
+					case "/user"://information about a user (username ip address)
 						if len(values) != 2 {
-							ch <- serverInformation + "Error in parameters, usage: /user <user>"
+							ch <- serverInformation + "Error writting parameters, the correct way isusage: /user <user>"
 						} else {
-							var found = false
+							var userFound = false
 							for _,person := range clients {
 								if person.name == values[1] {
-									found = true
+									userFound = true
 									ch <- serverInformation + "username: " + person.name + ", IP: " + person.ip
 									fmt.Println(serverInformation + "User: [" + who + "]")
 									break;
 								}
 							}
-							if !found {
-								ch <- serverInformation + "Error, user not found"
+							if !userFound {
+								ch <- serverInformation + "Error, user not userFound"
 							}
 						}
-					case "/kick":
+					case "/msg"://it send a direct message to the specified user
+						if len(values) < 3 {
+							ch <- serverInformation + "Error parameters not in order, usage: /msg <user> <msg>"
+						} else {
+							var userFound = false
+							for _,p := range clients {
+								if p.name == values[1] {
+									userFound = true
+									p.channel <- who + " (direct) > " + msg[6+len(p.name):]
+									break;
+								}
+							}
+							if !userFound {
+								ch <- serverInformation + "Error, user not userFound"
+							}
+						}
+					case "/kick"://it removes a user
 						if clients[ch].admin {
 							if len(values) != 2 {
 								ch <- serverInformation + "Error in parameters, usage: /kick <user>"
 							} else {
-								var found = false
+								var userFound = false
 								for _,person := range clients {
 									if person.name == values[1] {
-										found = true
+										userFound = true
 										person.channel <- serverInformation + "You're kicked from this channel"
 										leaving <- person.channel
-										fmt.Println(serverInformation + person.name + " has been kicked")
 										messages <- serverInformation + person.name + " has been kicked from channel"
+										fmt.Println(serverInformation + person.name + " has been kicked")
+										
 										person.conn.Close()
 										break;
 									}
 								}
-								if !found {
-									ch <- serverInformation + "Error, user not found"
+								if !userFound {
+									ch <- serverInformation + "Error, the user you requested was not userFound in the Lepe Server"
 								}
 							}
 						} else {
-							ch <- serverInformation + "Error, you don't have permissions, you need to be admin"
+							ch <- serverInformation + "Error, your user doesn't have the permissions to kisk a user, you need to be a MASTER-ADMIN user"
 						}
 					default:
-						ch <- serverInformation + "Error, command not found"
+						ch <- serverInformation + "Error, command not userFound"
 					}
 				} else { // Message
 					messages <- who + " > " + msg
@@ -188,10 +190,11 @@ func handleConn(conn net.Conn) {
 			}
 		}
 		if clients[ch] != nil {
-			// NOTE: ignoring errors that can happen in input.Err()
+			// It ignorserrors that can happen in input.Err()
 			leaving <- ch
-			fmt.Println(serverInformation + "[" + who + "] left the chat")
 			messages <- serverInformation + "[" + who + "] left the chat/channel"
+			fmt.Println(serverInformation + "[" + who + "] left the chat")
+			
 			conn.Close()
 		}
 	}
