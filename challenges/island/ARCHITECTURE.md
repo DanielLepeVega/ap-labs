@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Island in C
 
 
